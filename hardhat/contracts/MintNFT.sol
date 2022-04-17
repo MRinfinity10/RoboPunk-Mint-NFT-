@@ -4,7 +4,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract MintNFT is ERC721, Ownable {
-    uint256 public mintPrice;  //save price
+    uint256 public mintPrice;  //save price token mint
     uint256 public totalSupply; // total supply token
     uint256 public maxSupply;   // total public supply
     uint256 public maxPerWallet; // Maximum tokens per wallet
@@ -31,8 +31,8 @@ contract MintNFT is ERC721, Ownable {
     }
 
     function tokenURI(uint256 tokenId_)public view override returns(string memory){
-        require(_exist(tokenId_), 'token dose not exist!');
-        return string(abi.encodePacked(baseTokenUri, strings.toString(tokenId_), ".json"));
+        require(_exists(tokenId_), 'token dose not exist!');
+        return string(abi.encodePacked(baseTokenUri, Strings.toString(tokenId_), ".json"));
     }
 
     function withdraw() external onlyOwner {
@@ -41,7 +41,7 @@ contract MintNFT is ERC721, Ownable {
     }
 
     function mint(uint256 quanitity_) public payable{
-        require(isPublicMintEnsble, 'minting not enabe');
+        require(isPublicMintEnabled, 'minting not enabe');
         require(msg.value == quanitity_ * mintPrice, 'wrong mint value');
         require(totalSupply + quanitity_ <= maxSupply, 'sold out');
         require(walletMints[msg.sender] + quanitity_ <= maxPerWallet, 'exeed max wallet');
@@ -49,7 +49,7 @@ contract MintNFT is ERC721, Ownable {
         for (uint256 i = 0; i < quanitity_; i++){
             uint256 newTokenId = totalSupply + 1;
             totalSupply++;
-            _safemint(msg.sender, newTokenId);
+            _safeMint(msg.sender, newTokenId);
         }
     }
 
